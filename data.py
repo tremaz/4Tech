@@ -2,54 +2,82 @@
 import numpy as np
 import pandas as pd
 
-data = pd.read_excel(".\Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan')
+DataGupy = pd.read_excel(".\Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
+DataSuplyGo = pd.read_excel(".\Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",header=6, index_col=None, keep_default_na=False , na_values= 'nan', sheet_name="Relatorio") #AQUI DADOS SUPPLyGO
 
-def taxaDeConclusão():
+# PARTE GUPY
+
+def taxaDeConclusãoG():
     taxa = 0
-    for i in range(len(data)):
-        info = data.iloc[i]["Status de realização"]
+    for i in range(len(DataGupy)):
+        info = DataGupy.iloc[i]["Status de realização"]
         if(info == "Concluído"):
             taxa = taxa + 1
-    calculoTaxa = round((taxa/(len(data)))*100, 2)
+    calculoTaxa = round((taxa/(len(DataGupy)))*100, 2)
     print(calculoTaxa, "% é a taxa de conclusão geral")
+    return calculoTaxa
 
-def iniciados():
-    taxa = 0
-    for i in range(len(data)):
-        dataIn = data.iloc[i]["Data de início na trilha"]
-        dataFi = data.iloc[i]["Data de finalização na trilha"]
+def iniciadosG():
+    for i in range(len(DataGupy)):
+        dataIn = DataGupy.iloc[i]["Data de início na trilha"]
+        dataFi = DataGupy.iloc[i]["Data de finalização na trilha"]
         if dataIn != "" and dataFi != "":
-            print(i, data.iloc[i]["Chefia ADP"], " iniciou")
+            print(i, DataGupy.iloc[i]["Chefia ADP"], " iniciou")
         else:
-            print(i, data.iloc[i]["Chefia ADP"], " não concluido")
+            print(i, DataGupy.iloc[i]["Chefia ADP"], " não concluido")
 
-def concluidos():
-    for i in range(len(data)):
-        dataIn = data.iloc[i]["Data de início na trilha"]
+def concluidosG():
+    for i in range(len(DataGupy)):
+        dataIn = DataGupy.iloc[i]["Data de início na trilha"]
         if dataIn != "":
-            print(i, data.iloc[i]["Chefia ADP"], " concluido")
+            print(i, DataGupy.iloc[i]["Chefia ADP"], " concluido")
 
-def naoIniciados():
-    for i in range(len(data)):
-        dataIn = data.iloc[i]["Data de início na trilha"]
-        dataFi = data.iloc[i]["Data de finalização na trilha"]
+def naoIniciadosG():
+    for i in range(len(DataGupy)):
+        dataIn = DataGupy.iloc[i]["Data de início na trilha"]
+        dataFi = DataGupy.iloc[i]["Data de finalização na trilha"]
         if dataIn == "" and dataFi == "":
-            print(i, data.iloc[i]["Chefia ADP"], " Não iniciou")
+            print(i, DataGupy.iloc[i]["Chefia ADP"], " Não iniciou")
 
-def mensagem():
-    print()
+# PARTE SUPPLY GO
+
+def taxaDeConclusãoS():
+    taxa = 0
+    for i in range(len(DataSuplyGo)):
+        info = DataSuplyGo.iloc[i]["Status Trilha"]
+        if(info == "Concluído"):
+            taxa = taxa + 1
+    calculoTaxa = round((taxa/(len(DataSuplyGo)))*100, 2)
+    print(calculoTaxa, "% é a taxa de conclusão geral")
+    return calculoTaxa
+
+def concluidosS():
+    for i in range(len(DataSuplyGo)):
+        dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
+        dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
+        if dataTot == dataCurs:
+            print(i, DataSuplyGo.iloc[i]["Nome"])
+
+def inConcS(): 
+    for i in range(len(DataSuplyGo)):
+        dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
+        dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
+        if dataTot != dataCurs:
+            print(i, DataSuplyGo.iloc[i]["Nome"])
+
+#Pseudo Menu
 
 def run():
-    objetivo = int(input("1 - Taxa de conclusão || 2 - Iniciados || 3 - Concluidos || 4 - Não Iniciados || 5 - Sair"))
+    objetivo = 0
     while objetivo != 5:
+        objetivo = int(input("1 - Taxa de conclusão || 2 - Iniciados || 3 - Concluidos || 4 - Não Iniciados || 5 - Sair"))
         match objetivo:
-            case 1: taxaDeConclusão()
+            case 1: taxaDeConclusãoG()
 
-            case 2: iniciados()
+            case 2: iniciadosG()
 
-            case 3: concluidos()
+            case 3: concluidosG()
 
-            case 4: naoIniciados()
-    run()
-        
-run()
+            case 4: naoIniciadosG()        
+
+taxaDeConclusãoG()
