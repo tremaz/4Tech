@@ -2,10 +2,51 @@
 import numpy as np
 import pandas as pd
 
-DataGupy = pd.read_excel(".\Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
-DataSuplyGo = pd.read_excel(".\Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",header=6, index_col=None, keep_default_na=False , na_values= 'nan', sheet_name="Relatorio") #AQUI DADOS SUPPLyGO
+DataGupy = pd.read_excel("./Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
+DataSuplyGo = pd.read_excel("./Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",header=6, index_col=None, keep_default_na=False , na_values= 'nan', sheet_name="Relatorio") #AQUI DADOS SUPPLyGO
 
 # PARTE GUPY
+
+def estado_ou_uf(valor):
+    estados = {
+        "AC": "Acre",
+        "AL": "Alagoas",
+        "AP": "Amapá",
+        "AM": "Amazonas",
+        "BA": "Bahia",
+        "CE": "Ceará",
+        "DF": "Distrito Federal",
+        "ES": "Espírito Santo",
+        "GO": "Goiás",
+        "MA": "Maranhão",
+        "MT": "Mato Grosso",
+        "MS": "Mato Grosso do Sul",
+        "MG": "Minas Gerais",
+        "PA": "Pará",
+        "PB": "Paraíba",
+        "PR": "Paraná",
+        "PE": "Pernambuco",
+        "PI": "Piauí",
+        "RJ": "Rio de Janeiro",
+        "RN": "Rio Grande do Norte",
+        "RS": "Rio Grande do Sul",
+        "RO": "Rondônia",
+        "RR": "Roraima",
+        "SC": "Santa Catarina",
+        "SP": "São Paulo",
+        "SE": "Sergipe",
+        "TO": "Tocantins"
+    }
+
+    valor = valor.strip()
+
+    # Se for UF
+    if len(valor) == 2:
+        return estados.get(valor.upper(), "UF inválida")
+
+    # Se for nome do estado
+    estados_invertido = {v.lower(): k for k, v in estados.items()}
+    return estados_invertido.get(valor.lower(), "Estado inválido")
 
 def selectEstadoG():
     global quantEstado
@@ -55,7 +96,22 @@ def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
         if (dataIn == "Concluído") and (dataEs == EstadoDesejado):
             print(i, DataGupy.iloc[i]["Chefia ADP"])
 
-    # print(ConcluidosDoEstado)
+def concluidoG(Sla): #Mostra quantos concluiram o curso
+    # print(f"Concluidos no estado {EstadoDesejado}: ")
+    count = 0
+    for i in range(len(DataGupy)):
+        dataEs = DataGupy.iloc[i]["Estado"]
+        dataIn = DataGupy.iloc[i]["Status de realização"]
+        if (dataIn == "Concluído"):
+            # print(i, DataGupy.iloc[i]["Chefia ADP"])
+            count = count + 1
+    return count
+    
+def quantG():
+    count = 0
+    for i in range(len(DataGupy)):
+        count = count + 1
+    return count
 
 # PARTE SUPPLY GO
 
@@ -79,20 +135,46 @@ def taxaDeConclusãoS():
     print(f"{calculoTaxa} % é a taxa de conclusão geral da SupplyGo")
     return calculoTaxa
 
-def concluidosS():
+def concluidosS(): #Mostra quantos concluiram o curso no estado e RETORNA A QUANTIDADE
     for i in range(len(DataSuplyGo)):
+        count = 0
         dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
         dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
-        if dataTot == dataCurs:
-            print(i, DataSuplyGo.iloc[i]["Nome"])
-
+        dataEs = DataSuplyGo.iloc[i]["ESTADO"]
+        if dataTot == dataCurs and dataEs == EstadoDesejado:
+            print(i, DataSuplyGo.iloc[i]["Nome"], f" concluiram no estado {EstadoDesejado}")
+            count = count + 1            
+    return count
 def concluindoS(): 
+    count = 0
     for i in range(len(DataSuplyGo)):
         dataEs = DataSuplyGo.iloc[i]["ESTADO"]
         dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
         dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
         if dataTot != dataCurs and dataEs == EstadoDesejado and dataEs == EstadoDesejado:
             print(i, DataSuplyGo.iloc[i]["Nome"])
+            count = count + 1
+    return count  
+
+def concluidoS(Sla): #Conta todos que concluiram o curso na S e RETORNA A QUANTIDADE
+    for i in range(len(DataSuplyGo)):
+        count = 0
+        dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
+        dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
+        if dataTot == dataCurs:
+            # print(i, DataSuplyGo.iloc[i]["Nome"])
+            count = count + 1            
+    return count
+            
+def quantS():
+    count = 0
+    for i in range(len(DataSuplyGo)):
+        count = count + 1
+    return count
+
+
+def concluidosTot():
+    print(f"Foram analisados {quantG() + quantG()} colaboradores, dos quais, {concluidoG(1) + concluidoS(1)}, concluiram")
 
 #Pseudo Menu
 
@@ -118,4 +200,5 @@ def run():
 
             case 7: concluidosS()
 
-run()
+selectEstadoG()
+concluidosTot()
