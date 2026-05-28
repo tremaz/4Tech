@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-DataGupy = pd.read_excel(".\Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
+DataGupy = pd.read_excel(".\Participants-36809.xlsx",header=1, index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
 DataSuplyGo = pd.read_excel(".\Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",header=6, index_col=None, keep_default_na=False , na_values= 'nan', sheet_name="Relatorio") #AQUI DADOS SUPPLyGO
 
 # PARTE GUPY
@@ -14,7 +14,7 @@ def taxaDeConclusãoG():
         if(info == "Concluído"):
             taxa = taxa + 1
     calculoTaxa = round((taxa/(len(DataGupy)))*100, 2)
-    print(calculoTaxa, "% é a taxa de conclusão geral")
+    # print(calculoTaxa, "% é a taxa de conclusão geral")
     return calculoTaxa
 
 def iniciadosG():
@@ -24,13 +24,21 @@ def iniciadosG():
         if dataIn != "" and dataFi != "":
             print(i, DataGupy.iloc[i]["Chefia ADP"], " iniciou")
         else:
-            print(i, DataGupy.iloc[i]["Chefia ADP"], " não concluido")
+            print(i, DataGupy.iloc[i]["Chefia ADP"], " não iniciou")
 
-def concluidosG():
+def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
+    Concluidos = pd.Series()
+    ConcluidosDoEstado = pd.Series()
+    EstadoDesejado = input("Digite o UF do estado desejado")
+    
     for i in range(len(DataGupy)):
         dataIn = DataGupy.iloc[i]["Data de início na trilha"]
-        if dataIn != "":
+        dataEs = DataGupy.iloc[i]["Estado"]
+        if dataIn != "" and dataEs == EstadoDesejado:
             print(i, DataGupy.iloc[i]["Chefia ADP"], " concluido")
+
+    # print(ConcluidosDoEstado)
+
 
 def naoIniciadosG():
     for i in range(len(DataGupy)):
@@ -48,7 +56,7 @@ def taxaDeConclusãoS():
         if(info == "Concluído"):
             taxa = taxa + 1
     calculoTaxa = round((taxa/(len(DataSuplyGo)))*100, 2)
-    print(calculoTaxa, "% é a taxa de conclusão geral")
+    print(f"{calculoTaxa} % é a taxa de conclusão geral da SupplyGo")
     return calculoTaxa
 
 def concluidosS():
@@ -80,4 +88,4 @@ def run():
 
             case 4: naoIniciadosG()        
 
-taxaDeConclusãoG()
+concluidosG()
