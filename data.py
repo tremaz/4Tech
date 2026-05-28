@@ -7,7 +7,7 @@ DataSuplyGo = pd.read_excel("./Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",he
 
 # PARTE GUPY
 
-def estado_ou_uf(valor):
+def UFES(valor):
     estados = {
         "AC": "Acre",
         "AL": "Alagoas",
