@@ -7,7 +7,7 @@ DataSuplyGo = pd.read_excel(".\Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",he
 
 # PARTE GUPY
 
-def selectEstado():
+def selectEstadoG():
     global quantEstado
     global EstadoDesejado
     quantEstado = 0
@@ -15,6 +15,7 @@ def selectEstado():
     for i in range(len(DataGupy)):
         if DataGupy.iloc[i]["Estado"] == EstadoDesejado:
             quantEstado = quantEstado+1
+    return EstadoDesejado
 
 def taxaDeConclusãoG():
     taxa = 0
@@ -58,13 +59,23 @@ def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
 
 # PARTE SUPPLY GO
 
+def selectEstadoS():
+    global EstadoDesejado
+    global quantEstado
+    quantEstado = 0
+    EstadoDesejado = input("Digite o nome do estado desejado: ").upper()
+    for i in range(len(DataSuplyGo)):
+        if DataSuplyGo.iloc[i]["ESTADO"] == EstadoDesejado:
+            quantEstado = quantEstado+1
+    return EstadoDesejado
+
 def taxaDeConclusãoS():
     taxa = 0
     for i in range(len(DataSuplyGo)):
         info = DataSuplyGo.iloc[i]["Status Trilha"]
         if(info == "Concluído"):
             taxa = taxa + 1
-    calculoTaxa = round((taxa/(len(DataSuplyGo)))*100, 2)
+    calculoTaxa = round((taxa/quantEstado)*100, 2)
     print(f"{calculoTaxa} % é a taxa de conclusão geral da SupplyGo")
     return calculoTaxa
 
@@ -75,21 +86,23 @@ def concluidosS():
         if dataTot == dataCurs:
             print(i, DataSuplyGo.iloc[i]["Nome"])
 
-def inConcS(): 
+def concluindoS(): 
     for i in range(len(DataSuplyGo)):
+        dataEs = DataSuplyGo.iloc[i]["ESTADO"]
         dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
         dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
-        if dataTot != dataCurs:
+        if dataTot != dataCurs and dataEs == EstadoDesejado and dataEs == EstadoDesejado:
             print(i, DataSuplyGo.iloc[i]["Nome"])
 
 #Pseudo Menu
 
 def run():
+    selectEstadoS()
     objetivo = 0
-    while objetivo != 5:
-        objetivo = int(input(f"0 - Mudar estado || 1 - Taxa de conclusão || 2 - Iniciados || 3 - Não Iniciados || 4 - Concluidos || 5 - Sair\n"))
+    while objetivo != 9:
+        objetivo = int(input(f"0 - Mudar estado || 1 - Taxa de conclusão || 2 - Iniciados || 3 - Não Iniciados || 4 - Concluidos || 9 - Sair\n"))
         match objetivo:
-            case 0: print(f"Estado: {EstadoDesejado}"), selectEstado()
+            case 0: print(f"Estado: {EstadoDesejado}"), selectEstadoG()
 
             case 1: taxaDeConclusãoG()
 
@@ -97,8 +110,12 @@ def run():
 
             case 3: naoIniciadosG()
 
-            case 4: concluidosG()      
+            case 4: concluidosG()
 
-selectEstado()
+            case 5: taxaDeConclusãoS()
+
+            case 6: concluindoS()
+
+            case 7: concluidosS()
+
 run()
-print(quantEstado)
