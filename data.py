@@ -2,50 +2,59 @@
 import numpy as np
 import pandas as pd
 
-DataGupy = pd.read_excel(".\Participants-36809.xlsx",header=1, index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
+DataGupy = pd.read_excel(".\Participants-36809.xlsx", index_col=None, keep_default_na=False , na_values= 'nan') #AQUI DADOS DA GUPY
 DataSuplyGo = pd.read_excel(".\Relatório SupplyGo - Desafio_Hack-ta-on.xlsx",header=6, index_col=None, keep_default_na=False , na_values= 'nan', sheet_name="Relatorio") #AQUI DADOS SUPPLyGO
 
 # PARTE GUPY
 
+def selectEstado():
+    global quantEstado
+    global EstadoDesejado
+    quantEstado = 0
+    EstadoDesejado = input("Digite o UF do estado desejado: ")
+    for i in range(len(DataGupy)):
+        if DataGupy.iloc[i]["Estado"] == EstadoDesejado:
+            quantEstado = quantEstado+1
+
 def taxaDeConclusãoG():
     taxa = 0
     for i in range(len(DataGupy)):
+        dataEs = DataGupy.iloc[i]["Estado"]
         info = DataGupy.iloc[i]["Status de realização"]
-        if(info == "Concluído"):
+        if (info == "Concluído") and (dataEs == EstadoDesejado):
             taxa = taxa + 1
-    calculoTaxa = round((taxa/(len(DataGupy)))*100, 2)
-    # print(calculoTaxa, "% é a taxa de conclusão geral")
+    calculoTaxa = round((taxa/quantEstado)*100, 2)
+    print(f"{calculoTaxa} % é a taxa de conclusão do estado {EstadoDesejado}")
     return calculoTaxa
 
 def iniciadosG():
+    print(f"No estado {EstadoDesejado} iniciaram: ")
     for i in range(len(DataGupy)):
+        dataEs = DataGupy.iloc[i]["Estado"]
         dataIn = DataGupy.iloc[i]["Data de início na trilha"]
         dataFi = DataGupy.iloc[i]["Data de finalização na trilha"]
-        if dataIn != "" and dataFi != "":
-            print(i, DataGupy.iloc[i]["Chefia ADP"], " iniciou")
-        else:
-            print(i, DataGupy.iloc[i]["Chefia ADP"], " não iniciou")
-
-def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
-    Concluidos = pd.Series()
-    ConcluidosDoEstado = pd.Series()
-    EstadoDesejado = input("Digite o UF do estado desejado")
-    
-    for i in range(len(DataGupy)):
-        dataIn = DataGupy.iloc[i]["Data de início na trilha"]
-        dataEs = DataGupy.iloc[i]["Estado"]
-        if dataIn != "" and dataEs == EstadoDesejado:
-            print(i, DataGupy.iloc[i]["Chefia ADP"], " concluido")
-
-    # print(ConcluidosDoEstado)
-
+        if (dataIn != "") and (dataFi != "") and (dataEs == EstadoDesejado):
+            print(i, DataGupy.iloc[i]["Chefia ADP"])
 
 def naoIniciadosG():
+    print(f"No estado {EstadoDesejado} não iniciaram: ")
     for i in range(len(DataGupy)):
+        dataEs = DataGupy.iloc[i]["Estado"]
         dataIn = DataGupy.iloc[i]["Data de início na trilha"]
         dataFi = DataGupy.iloc[i]["Data de finalização na trilha"]
-        if dataIn == "" and dataFi == "":
-            print(i, DataGupy.iloc[i]["Chefia ADP"], " Não iniciou")
+        if (dataIn == "") and (dataFi == "") and (dataEs == EstadoDesejado):
+            print(i, DataGupy.iloc[i]["Chefia ADP"])
+
+
+def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
+    print(f"Concluidos no estado {EstadoDesejado}: ")
+    for i in range(len(DataGupy)):
+        dataEs = DataGupy.iloc[i]["Estado"]
+        dataIn = DataGupy.iloc[i]["Status de realização"]
+        if (dataIn == "Concluído") and (dataEs == EstadoDesejado):
+            print(i, DataGupy.iloc[i]["Chefia ADP"])
+
+    # print(ConcluidosDoEstado)
 
 # PARTE SUPPLY GO
 
@@ -78,14 +87,18 @@ def inConcS():
 def run():
     objetivo = 0
     while objetivo != 5:
-        objetivo = int(input("1 - Taxa de conclusão || 2 - Iniciados || 3 - Concluidos || 4 - Não Iniciados || 5 - Sair"))
+        objetivo = int(input(f"0 - Mudar estado || 1 - Taxa de conclusão || 2 - Iniciados || 3 - Não Iniciados || 4 - Concluidos || 5 - Sair\n"))
         match objetivo:
+            case 0: print(f"Estado: {EstadoDesejado}"), selectEstado()
+
             case 1: taxaDeConclusãoG()
 
             case 2: iniciadosG()
 
-            case 3: concluidosG()
+            case 3: naoIniciadosG()
 
-            case 4: naoIniciadosG()        
+            case 4: concluidosG()      
 
-concluidosG()
+selectEstado()
+run()
+print(quantEstado)
