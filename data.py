@@ -96,7 +96,7 @@ def concluidosG(): #Mostra quem concluiu o curso em um estado selecionado
         if (dataIn == "Concluído") and (dataEs == EstadoDesejado):
             print(i, DataGupy.iloc[i]["Chefia ADP"])
 
-def concluidoG(Sla): #Mostra quantos concluiram o curso
+def concluidoTotG(): #Mostra quantos concluiram o curso
     # print(f"Concluidos no estado {EstadoDesejado}: ")
     count = 0
     for i in range(len(DataGupy)):
@@ -145,6 +145,7 @@ def concluidosS(): #Mostra quantos concluiram o curso no estado e RETORNA A QUAN
             print(i, DataSuplyGo.iloc[i]["Nome"], f" concluiram no estado {EstadoDesejado}")
             count = count + 1            
     return count
+
 def concluindoS(): 
     count = 0
     for i in range(len(DataSuplyGo)):
@@ -156,14 +157,14 @@ def concluindoS():
             count = count + 1
     return count  
 
-def concluidoS(Sla): #Conta todos que concluiram o curso na S e RETORNA A QUANTIDADE
+def concluidoTotS(): #Conta todos que concluiram o curso na S e RETORNA A QUANTIDADE
+    count = 0
     for i in range(len(DataSuplyGo)):
-        count = 0
-        dataTot = DataSuplyGo.iloc[i]["Carga Horária Total"]
-        dataCurs = DataSuplyGo.iloc[i]["Carga Horária Cursada"]
-        if dataTot == dataCurs:
+        dataConc = DataSuplyGo.iloc[i]["Status Trilha"]
+        if dataConc == "Concluído":
             # print(i, DataSuplyGo.iloc[i]["Nome"])
-            count = count + 1            
+            count = count + 1  
+    print(count)          
     return count
             
 def quantS():
@@ -174,7 +175,10 @@ def quantS():
 
 
 def concluidosTot():
-    print(f"Foram analisados {quantG() + quantG()} colaboradores, dos quais, {concluidoG(1) + concluidoS(1)}, concluiram")
+    QuantCursando = quantG() + quantG()
+    QuantConcluido = concluidoTotG() + concluidoTotS()
+    print(f"Foram analisados {QuantCursando} colaboradores, dos quais, {QuantConcluido}, concluiram")
+    return(round(QuantConcluido/QuantCursando)*100, 2)
 
 #Pseudo Menu
 
@@ -200,5 +204,4 @@ def run():
 
             case 7: concluidosS()
 
-selectEstadoG()
-concluidosTot()
+concluidoTotS()
