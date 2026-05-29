@@ -124,7 +124,24 @@ async def upload_planilha(arquivo: UploadFile = File(...)):
     """
     try:
         conteudo = await arquivo.read()
-        df = pd.read_excel(io.BytesIO(conteudo))
+        
+        # Tenta ler o Excel com diferentes configurações
+        df = None
+        
+        # Tenta ler com sheet_name=None para ver todas as abas
+        try:
+            xl = pd.ExcelFile(io.BytesIO(conteudo))
+            # SupplyGo tem abas específicas
+            if 'Relatorio' in xl.sheet_names:
+                df = pd.read_excel(io.BytesIO(conteudo), header=6, sheet_name='Relatorio')
+            elif 'Relatorio' in xl.sheet_names:
+                df = pd.read_excel(io.BytesIO(conteudo), header=6, sheet_name='Relatorio')
+            else:
+                # Fallback: tenta ler primeira aba com header default
+                df = pd.read_excel(io.BytesIO(conteudo))
+        except Exception:
+            # Fallback final
+            df = pd.read_excel(io.BytesIO(conteudo))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Erro ao ler arquivo: {str(e)}")
 
@@ -254,10 +271,10 @@ def gupy_colaboradores(
 
     return {
         "total": total,
-        "pagina": pagina,
-        "limite": limite,
-        "total_paginas": (total + limite - 1) // limite if limite else 1,
-        "dados": data,
+        "page": pagina,
+        "page_size": limite,
+        "total_pages": (total + limite - 1) // limite if limite else 1,
+        "items": data,
     }
 
 
@@ -296,10 +313,10 @@ def supplygo_colaboradores(
 
     return {
         "total": total,
-        "pagina": pagina,
-        "limite": limite,
-        "total_paginas": (total + limite - 1) // limite if limite else 1,
-        "dados": data,
+        "page": pagina,
+        "page_size": limite,
+        "total_pages": (total + limite - 1) // limite if limite else 1,
+        "items": data,
     }
 
 
@@ -351,10 +368,7 @@ def supplygo_problemas():
     cols_exist = [c for c in colunas if c in problemas.columns]
     data = problemas[cols_exist].to_dict(orient="records")
 
-    return {
-        "total": len(data),
-        "dados": data,
-    }
+    return data
 
 
 # =============================================================================

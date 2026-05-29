@@ -52,6 +52,9 @@ class RespostaGupy(BaseModel):
     por_diretoria: List[Agrupamento] = Field(default_factory=list)
     por_chefia: List[Agrupamento] = Field(default_factory=list)
     por_cargo: List[Agrupamento] = Field(default_factory=list)
+    por_subarea: List[Agrupamento] = Field(default_factory=list)
+    por_centro_resultado: List[Agrupamento] = Field(default_factory=list)
+    por_centro_custo: List[Agrupamento] = Field(default_factory=list)
     status_distribution: Dict[str, int] = Field(default_factory=dict)
     progresso_por_estado: List[AgrupamentoProgresso] = Field(default_factory=list)
 
@@ -65,6 +68,8 @@ class RespostaSupplyGo(BaseModel):
     por_familia_cargo: List[Agrupamento] = Field(default_factory=list)
     por_cargo: List[Agrupamento] = Field(default_factory=list)
     por_gerencia_operacional: List[Agrupamento] = Field(default_factory=list)
+    por_lideranca_imediata: List[Agrupamento] = Field(default_factory=list)
+    por_centro_custo: List[Agrupamento] = Field(default_factory=list)
     status_distribution: Dict[str, int] = Field(default_factory=dict)
     progresso_por_estado: List[AgrupamentoProgresso] = Field(default_factory=list)
 
